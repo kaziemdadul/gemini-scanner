@@ -63,26 +63,21 @@ def run_scan(message):
                 text=True
             )
             
-            # Send notification that it finished
-            bot.send_message(chat_id, "✅ *Scan Completed!*\nSending results...", parse_mode='Markdown')
-            
-            # Send the files if they exist
+            # Check for links and send results
             links_file = 'gemini_activation_links.txt'
-            results_file = 'gemini_results.csv'
             
-            sent_files = 0
-            if os.path.exists(links_file):
-                with open(links_file, 'rb') as f:
-                    bot.send_document(chat_id, f)
-                sent_files += 1
-            
-            if os.path.exists(results_file):
-                with open(results_file, 'rb') as f:
-                    bot.send_document(chat_id, f)
-                sent_files += 1
+            if os.path.exists(links_file) and os.path.getsize(links_file) > 0:
+                with open(links_file, 'r', encoding='utf-8') as f:
+                    link_count = sum(1 for line in f if line.strip())
                 
-            if sent_files == 0:
-                bot.send_message(chat_id, "ℹ️ The scan finished, but no new links or results were generated.")
+                if link_count > 0:
+                    bot.send_message(chat_id, f"✅ *SCAN COMPLETED {link_count} LINK(S) FOUND*", parse_mode='Markdown')
+                    with open(links_file, 'rb') as f:
+                        bot.send_document(chat_id, f)
+                else:
+                    bot.send_message(chat_id, "ℹ️ scan completed no link found")
+            else:
+                bot.send_message(chat_id, "ℹ️ scan completed no link found")
                 
         except Exception as e:
             bot.send_message(chat_id, f"❌ *Error during scan:*\n`{str(e)}`", parse_mode='Markdown')
