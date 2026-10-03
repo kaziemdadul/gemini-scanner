@@ -13,13 +13,18 @@ is_scanning = False
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
+    markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    btn_scan = types.KeyboardButton('/scan')
+    btn_status = types.KeyboardButton('/status')
+    markup.add(btn_scan, btn_status)
+    
     welcome_text = (
         "🤖 *Welcome to the Jio Gemini Activation Bot!*\n\n"
         "Commands:\n"
         "/scan - Start the activation scanning process\n"
         "/status - Check if a scan is currently running"
     )
-    bot.reply_to(message, welcome_text, parse_mode='Markdown')
+    bot.reply_to(message, welcome_text, parse_mode='Markdown', reply_markup=markup)
 
 @bot.message_handler(commands=['status'])
 def send_status(message):
