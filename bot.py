@@ -48,6 +48,14 @@ def run_scan(message):
     def scan_thread(chat_id):
         global is_scanning
         try:
+            # Delete old result files before scanning
+            links_file = 'gemini_activation_links.txt'
+            results_file = 'gemini_results.csv'
+            if os.path.exists(links_file):
+                os.remove(links_file)
+            if os.path.exists(results_file):
+                os.remove(results_file)
+
             # Run the scanning script
             process = subprocess.run(
                 ['python', 'gemini18msc.py'], 
